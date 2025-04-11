@@ -1,0 +1,350 @@
+
+{% extends 'home.html' %}
+
+{% block title %}Chi tiết sản phẩm | The Goat Shop{% endblock %}
+
+{% block content %}
+    <style>
+        /* home.css */
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to right, #5affe1, #b1bfff);
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar {
+            background: linear-gradient(to right, #ff9f19, #f28dff);
+            padding: 0px;
+        }
+
+        .navbar-brand {
+            color: #fff;
+            font-size: 1.8rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .navbar-nav .nav-item .nav-link {
+            color: #000000;
+            font-size: 1rem;
+            transition: color 0.3s ease;
+            font-weight: bold;
+        }
+
+        .navbar-nav .nav-item .nav-link:hover {
+            color: #fff;
+            text-decoration: underline;
+        }
+
+        .footer {
+            background-color: #333;
+            color: #fff;
+            padding: 15px 0;
+            text-align: center;
+        }
+
+        .footer p {
+            margin: 0;
+            font-size: 0.8rem;
+            color: #aaa;
+        }
+
+        #product-detail {
+            background-color: #fff;
+            padding: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            margin-top: 20px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 0 20px 5px rgb(82 82 82 / 34%);
+        }
+
+        #product-detail:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 13px 4px rgb(255 255 255 / 59%);
+        }
+
+        #product-detail h2 {
+            font-size: 2rem;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 0;
+            text-align: center;
+            margin-right: 10%;
+        }
+
+        #product-detail .row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        #product-detail .col-md-6 {
+            margin-bottom: 15px;
+        }
+
+        #product-detail img {
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: 15px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #product-detail .product-info {
+            padding-left: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        #product-detail .product-info p {
+            font-size: 1rem;
+            color: #555;
+            margin-bottom: 8px;
+        }
+
+        #product-detail .product-info p.text-danger {
+            color: #d9534f;
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        #product-detail .btn-custom {
+            background-color: #5cb85c;
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            font-size: 1rem;
+            border-radius: 5px;
+            margin-top: 15px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        #product-detail .btn-custom:hover {
+            background-color: #4cae4c;
+            transform: scale(1.05);
+        }
+
+        #product-detail .btn-custom:active {
+            transform: scale(0.98);
+        }
+
+        .d-flex {
+            display: flex;
+            align-items: center; 
+            justify-content: space-between; 
+        }
+
+        .btn-light {
+            background-color: #f8f9fa;
+            color: #333;
+            border: 1px solid #ccc;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-size: 1.3rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-light:hover {
+            background-color: #e2e6ea;
+        }
+
+        .fas.fa-arrow-left {
+            font-size: 1.4rem;
+            margin-right: 10px;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .flex-grow-1 {
+            flex-grow: 1; 
+        }
+
+        @media (max-width: 768px) {
+            #product-detail {
+                padding: 12px;
+            }
+
+            #product-detail h2 {
+                font-size: 1.4rem;
+            }
+
+            #product-detail .product-info {
+                padding-left: 0;
+            }
+        }
+
+        .product-description {
+            display: -webkit-box;
+            -webkit-line-clamp: 5;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 1rem;
+            color: #777;
+            margin-bottom: 12px;
+            line-clamp: 5;
+        }
+    </style>
+    <!-- Chi tiết sản phẩm -->
+    <div class="container mt-5" id="product-detail">
+        <!-- Thông tin chi tiết sản phẩm sẽ được chèn vào đây thông qua JavaScript -->
+    </div>
+
+        <!-- Modal xác nhận đăng xuất -->
+<div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="logoutModalLabel">Xác nhận đăng xuất</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Bạn có chắc chắn muốn đăng xuất không?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-danger" onclick="confirmLogout()">Đăng xuất</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- JavaScript để gọi API và hiển thị chi tiết sản phẩm -->
+    <script>
+        // Lấy ID sản phẩm từ URL
+        const pathParts = window.location.pathname.split('/');
+        const productId = pathParts[pathParts.length - 2]; // ID sản phẩm từ URL
+
+        // Gọi API để lấy chi tiết sản phẩm theo ID
+        fetch(`/api/products/${productId}/`)
+            .then(response => response.json())
+            .then(product => {
+                const productDetailContainer = document.getElementById('product-detail');
+                
+                // Hiển thị thông tin chi tiết sản phẩm
+                const productDetail = `
+                    <div class="container mt-4" id="product-detail">
+                        <div class="d-flex align-items-center justify-content-between mb-4">
+                            <a href="javascript:history.back()" class="btn btn-light me-3">
+                                <i class="fas fa-arrow-left" style="font-weight: bold;"> < </i>
+                            </a>
+                            <h2 class="text-warning mb-0 ms-3 text-center flex-grow-1">${product.ten_san_pham}</h2>
+                        </div>
+
+                        <!-- Ảnh sản phẩm -->
+                        <img src="${product.hinh_anh}" class="d-block w-100" alt="Product Image">
+
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <p class="product-description">${product.mo_ta}</p>
+                            </div>
+                            <div class="col-md-6 product-info">
+                                <p><strong>Giá: </strong><span class="text-danger">${product.gia} VND</span></p>
+                                <p><strong>Loại Sản Phẩm: </strong>${product.danh_muc}</p>
+                                <p><strong>Size: </strong>${product.kich_co}</p>
+                                <button class="btn btn-primary" onclick="addToCart(${product.id})" style="margin-left: 20%">🛒 Thêm vào giỏ hàng</button>
+                            </div>
+                        </div>
+                    </div>`;
+                
+                productDetailContainer.innerHTML = productDetail;
+            });
+            
+    </script>
+
+    <script>
+        var loginUrl = "{% url 'login' %}";
+
+        function displayNotification(message, type = 'success') {
+    const container = document.getElementById('notification-container');
+    if (!container) return;
+
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.style.padding = '10px 20px';
+    notification.style.marginBottom = '10px';
+    notification.style.borderRadius = '4px';
+    notification.style.color = '#fff';
+    notification.style.boxShadow = '0 0 10px rgba(0,0,0,0.1)';
+    notification.style.opacity = '0';
+    notification.style.transition = 'opacity 0.5s ease';
+
+    // Đặt màu nền theo loại thông báo
+    if (type === 'success') {
+        notification.style.backgroundColor = '#28a745';
+    } else if (type === 'error') {
+        notification.style.backgroundColor = '#dc3545';
+    } else {
+        notification.style.backgroundColor = '#007bff';
+    }
+
+    notification.innerText = message;
+    container.appendChild(notification);
+
+    // Hiển thị thông báo (fade in)
+    setTimeout(() => {
+        notification.style.opacity = '1';
+    }, 100);
+
+    // Ẩn và xóa thông báo sau 3 giây
+    setTimeout(() => {
+        notification.style.opacity = '0';
+        setTimeout(() => {
+            container.removeChild(notification);
+        }, 500);
+    }, 3000);
+}
+
+async function addToCart(productId) {
+    console.log("Adding product ID:", productId); // Debug product ID
+    const accessToken = localStorage.getItem('access_token');
+    if (!accessToken) {
+        displayNotification('Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng.', 'error');
+        window.location.href = "{% url 'login' %}";
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/cart/add/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${accessToken}`
+            },
+            body: JSON.stringify({ san_pham_id: productId, so_luong: 1 })
+        });
+
+        const data = await response.json();
+        console.log("Response data:", data); // Debug API response
+
+        if (response.ok) {
+            displayNotification('Sản phẩm thêm vào giỏ hàng thành công !', 'success');
+        } else {
+            console.log("Response status:", response.status);
+            console.log("Response data:", data);
+            displayNotification('Lỗi khi thêm vào giỏ hàng: ' + JSON.stringify(data), 'error');
+        }
+    } catch (error) {
+        console.error('Lỗi khi thêm sản phẩm:', error);
+        displayNotification('Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng.', 'error');
+    }
+}
+
+    </script>
+
+{% endblock %}

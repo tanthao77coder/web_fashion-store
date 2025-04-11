@@ -1,0 +1,193 @@
+<style>
+  /* Định dạng chung */
+  * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+  }
+
+  body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #68fff7, #ffa2bf);
+  }
+
+  /* Hiệu ứng cho form */
+  main {
+      width: 100%;
+      max-width: 620px;
+      padding: 2rem;
+      background: rgba(255, 255, 255, 0.675);
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      text-align: center;
+      transition: transform 0.6s ease, box-shadow 0.66s ease ;
+  }
+
+  /* Hover vào form */
+  main:hover {
+    
+      transform: translateY(-15px);
+      box-shadow: 0px 0px 30px 10px rgba(255, 255, 255, 0.19);
+  }
+
+  h2 {
+      font-size: 2rem;
+      color: #333;
+      margin-bottom: 1.5rem;
+  }
+
+  form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+  }
+
+  form label {
+      text-align: left;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #555;
+  }
+
+  /* Hiệu ứng cho input */
+  form input,
+  form textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+      background: #f9f9f9;
+      transition: all 0.3s ease;
+  }
+
+  /* Focus vào input */
+  form input:focus,
+  form textarea:focus {
+      border-color: #4CAF50;
+      background: #fff;
+      box-shadow: 0 0 8px rgba(76, 175, 80, 0.5);
+      outline: none;
+  }
+
+  /* Hiệu ứng cho nút button */
+  button {
+      width: 100%;
+      padding: 14px;
+      font-size: 1.2rem;
+      color: white;
+      background: #4CAF50;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.3s ease, background 0.3s ease;
+  }
+
+  /* Hover vào button */
+  button:hover {
+      background: #45a049;
+      transform: scale(1.05);
+  }
+
+  p {
+      margin-top: 1rem;
+      font-size: 1rem;
+      color: #333;
+  }
+
+  p a {
+      color: #4CAF50;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s ease;
+  }
+
+  /* Hover vào link */
+  p a:hover {
+      text-decoration: underline;
+      color: #2E7D32;
+  }
+
+</style>
+
+<main>
+<h2>Đăng ký</h2>
+<form id="register-form">
+  <label for="username">Họ và tên:</label>
+  <input type="text" id="username" name="username" required />
+
+  <label for="email">Email:</label>
+  <input type="email" id="email" name="email" required />
+
+  <label for="so_dien_thoai">Số điện thoại:</label>
+  <input type="text" id="so_dien_thoai" name="so_dien_thoai" required />
+
+  <label for="dia_chi">Địa chỉ:</label>
+  <textarea id="dia_chi" name="dia_chi"></textarea>
+
+  <label for="password">Mật khẩu:</label>
+  <input type="password" id="password" name="password" required />
+
+  <label for="password2">Nhập lại mật khẩu:</label>
+  <input type="password" id="password2" name="password2" required />
+
+  <button type="submit">Đăng ký</button>
+  <p>Đã có tài khoản? <a href="{% url 'login' %}">Đăng nhập</a></p>
+  <div id="message"></div>
+</form>
+</main>
+
+<!-- Hiển thị thông báo -->
+<div id="message"></div>
+
+<script>document
+  .getElementById("register-form")
+  .addEventListener("submit", async function (event) {
+    event.preventDefault(); // Ngăn chặn reload trang
+
+    // Lấy dữ liệu từ form
+    const username = document.getElementById("username").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const so_dien_thoai = document.getElementById("so_dien_thoai").value.trim();
+    const dia_chi = document.getElementById("dia_chi").value.trim();
+    const password = document.getElementById("password").value;
+    const password2 = document.getElementById("password2").value;
+
+    // Kiểm tra mật khẩu khớp nhau
+    if (password !== password2) {
+      document.getElementById("message").innerHTML =
+        '<p style="color:red;">Mật khẩu không khớp!</p>';
+      return;
+    }
+
+    // Tạo đối tượng gửi đi
+    const formData = { username, email, so_dien_thoai, dia_chi, password, password2 };
+
+    try {
+      let response = await fetch("/api/auth/register/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      let result = await response.json();
+
+      if (response.ok) {
+        alert("Đăng ký thành công! Vui lòng đăng nhập.");
+        window.location.href = "/login/";
+      } else {
+        document.getElementById("message").innerHTML =
+          `<p style="color:red;">Lỗi: ${JSON.stringify(result)}</p>`;
+      }
+    } catch (error) {
+      document.getElementById("message").innerHTML =
+        '<p style="color:red;">Lỗi kết nối đến server!</p>';
+      console.error("Lỗi:", error);
+    }
+  });
+
+</script>

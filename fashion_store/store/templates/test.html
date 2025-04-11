@@ -1,0 +1,210 @@
+<style>
+  /* Định dạng chung */
+  * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+  }
+
+  body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: linear-gradient(to right, #4a90e2, #9b59b6);
+      transition: background 0.8s ease-in-out;
+  }
+
+  .container {
+      position: relative;
+      width: 550px;
+      overflow: hidden;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      transition: background 0.8s ease-in-out;
+  }
+
+  .form-wrapper {
+      display: flex;
+      width: 200%;
+      transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .form-box {
+      width: 50%;
+      padding: 3em;
+      text-align: center;
+      color: #fff;
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out;
+      border-radius: 15px;
+  }
+
+  .container.active .form-wrapper {
+      transform: translateX(-50%);
+  }
+
+  .container.active .register {
+      opacity: 1;
+  }
+
+  .container:not(.active) .login {
+      opacity: 1;
+  }
+
+  h2 {
+      font-size: 2.2em;
+      margin-bottom: 1.2em;
+  }
+
+  form {
+      display: flex;
+      flex-direction: column;
+  }
+
+  form label {
+      text-align: left;
+      font-size: 1.2em;
+      font-weight: bold;
+      margin-top: 1.2em;
+  }
+
+  form input {
+      width: 100%;
+      padding: 14px;
+      margin-top: 0.7em;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 1.2em;
+      background: #f0f8ff;
+      transition: all 0.3s ease;
+  }
+
+  form input:focus {
+      outline: none;
+      border-color: #ff6b6b;
+      background-color: #ffffff;
+      box-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+  }
+
+  button {
+      width: 100%;
+      padding: 14px;
+      font-size: 1.3em;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 1.5em;
+      font-weight: bold;
+      transition: all 0.3s ease-in-out;
+  }
+
+  p {
+      margin-top: 1.2em;
+      font-size: 1.1em;
+  }
+
+  p a {
+      color: #ffeb3b;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1.1em;
+      cursor: pointer;
+      transition: color 0.3s ease;
+  }
+
+  p a:hover {
+      color: #ffd700;
+      text-decoration: underline;
+  }
+
+  /* Màu nền khác nhau cho từng form */
+  .login {
+      background: linear-gradient(45deg, #ff6b6b, #ff8e53); /* Hồng - Cam */
+  }
+
+  .register {
+      background: linear-gradient(45deg, #4a90e2, #9b59b6); /* Xanh - Tím */
+  }
+
+  /* Nút bấm có màu trùng với nền trang */
+  .login button {
+      background: linear-gradient(45deg, #4a90e2, #9b59b6); /* Xanh - Tím */
+  }
+
+  .login button:hover {
+      background: linear-gradient(45deg, #3a80d2, #8b49a6);
+      transform: scale(1.05);
+  }
+
+  .register button {
+      background: linear-gradient(45deg, #ff6b6b, #ff8e53); /* Hồng - Cam */
+  }
+
+  .register button:hover {
+      background: linear-gradient(45deg, #ff5b5b, #ff6a33);
+      transform: scale(1.05);
+  }
+
+  /* Thay đổi màu nền body khi chuyển đổi */
+  .container.active {
+      background: linear-gradient(45deg, #ff8f8f, #ff7b34d7);
+  }
+
+  body.active {
+      background: linear-gradient(to right, #ffa3a3, #ff8e53);
+  }
+</style>
+
+<div class="container">
+    <div class="form-wrapper">
+        <!-- Form Đăng Nhập -->
+        <div class="form-box login">
+            <h2>Đăng nhập</h2>
+            <form id="login-form">
+                <label for="username">Tên đăng nhập:</label>
+                <input type="text" id="username" name="username" placeholder="Username" required />
+
+                <label for="password">Mật khẩu:</label>
+                <input type="password" id="password" name="password" placeholder="Password" required />
+
+                <button type="submit">Đăng Nhập</button>
+
+                <p>Chưa có tài khoản? <a id="show-register">Đăng ký</a></p>
+            </form>
+        </div>
+
+        <!-- Form Đăng Ký -->
+        <div class="form-box register">
+            <h2>Đăng ký</h2>
+            <form id="register-form">
+                <label for="new-username">Tên đăng nhập:</label>
+                <input type="text" id="new-username" name="new-username" placeholder="Username" required />
+
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" placeholder="Email" required />
+
+                <label for="new-password">Mật khẩu:</label>
+                <input type="password" id="new-password" name="new-password" placeholder="Password" required />
+
+                <button type="submit">Đăng Ký</button>
+
+                <p>Đã có tài khoản? <a id="show-login">Đăng nhập</a></p>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+  document.getElementById("show-register").addEventListener("click", function () {
+      document.querySelector(".container").classList.add("active");
+      document.body.classList.add("active");
+  });
+
+  document.getElementById("show-login").addEventListener("click", function () {
+      document.querySelector(".container").classList.remove("active");
+      document.body.classList.remove("active");
+  });
+</script>

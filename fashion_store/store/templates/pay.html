@@ -1,0 +1,365 @@
+{% extends 'home.html' %} {% load static %} {% block title %}Thanh Toán | The
+Goat Shop{% endblock %} {% block content %}
+<style>
+
+.modal {
+    display: none;
+    width: auto;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+}
+
+p {
+    margin: 20px;
+    font-weight: 300;
+    font-size: 25px;
+    line-height: 30px;
+}
+
+h2 {
+    font-size: 25px;
+    color: #0471ff;
+}
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    text-align: center;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    width: auto;
+}
+
+.modal-buttons {
+    margin-top: 20px;
+}
+
+.btn {
+    padding: 10px 15px;
+    border: none;
+    cursor: pointer;
+    margin: 5px;
+}
+
+.btn-primary {
+    background: #007bff;
+    color: white;
+}
+
+
+</style>
+<div class="collection_text" style="margin-top: 1%; padding: 20px 0; margin-bottom: 1%;">Thanh toán</div>
+<div class="container py-4">
+  <!-- Bảng sản phẩm -->
+  <div class="card shadow-lg">
+    <div class="card-body">
+      <table class="table table-hover">
+        <thead class="table-dark">
+          <tr>
+            <th>Sản phẩm</th>
+            <th>Giá gốc</th>
+            <th>Giảm giá</th>
+            <th>Giá sau giảm</th>
+            <th>Số lượng</th>
+            <th>Thành tiền</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in selected_items %}
+          <tr
+            data-id="{{ item.san_pham.id }}"
+            data-quantity="{{ item.so_luong }}"
+          >
+            <td>{{ item.san_pham.ten_san_pham }}</td>
+            <td><del>{{ item.san_pham.gia | floatformat:0 }} ₫</del></td>
+            <td class="text-danger">{{ item.san_pham.giam_gia }} %</td>
+            <td class="text-success">{{ item.san_pham.get_final_price }} ₫</td>
+            <td>{{ item.so_luong }}</td>
+            <td class="text-success">
+              {% widthratio item.san_pham.get_final_price 1 item.so_luong %} ₫
+          </td>          
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <div class="text-end mt-3">
+        <h4>
+          <strong>Tổng tiền: </strong>
+          <span class="text-danger">{{ tong_gia }}₫</span>
+        </h4>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chọn phương thức thanh toán -->
+  <div class="card shadow-lg mt-4">
+    <div class="card-body">
+      <h3 class="mb-3 text-center">💳 Chọn phương thức thanh toán</h3>
+      <form id="paymentForm">
+        {% csrf_token %}
+
+        <div class="d-flex justify-content-center gap-4 flex-wrap">
+          <label>
+            <input type="radio" name="phuong_thuc_tt" value="cod" checked />
+            Thanh toán khi nhận hàng (COD)
+          </label>
+          <label>
+            <input type="radio" name="phuong_thuc_tt" value="online" /> Thanh
+            toán Online
+          </label>
+        </div>
+
+        <!-- Cổng thanh toán online (ẩn mặc định) -->
+        <div
+          id="onlinePaymentMethods"
+          class="mt-3 p-3 bg-light border rounded text-center"
+          style="display: none"
+        >
+          <h5>Chọn cổng thanh toán</h5>
+          <label
+            ><input type="radio" name="phuong_thuc_online" value="momo" />
+            MoMo</label
+          >
+          <label
+            ><input type="radio" name="phuong_thuc_online" value="zalopay" />
+            ZaloPay</label
+          >
+          <label
+            ><input type="radio" name="phuong_thuc_online" value="vnpay" />
+            VNPay</label
+          >
+        </div>
+
+        <div class="d-flex justify-content-between mt-4">
+          <button
+            type="button"
+            class="btn btn-danger btn-lg"
+            id="cancelPayment"
+          >
+            ❌ Hủy
+          </button>
+          <button
+            type="submit"
+            class="btn btn-success btn-lg"
+            id="confirmPayment"
+          >
+            ✅ Thanh toán
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- Modal xác nhận sau thanh toán -->
+<div id="paymentSuccessModal" class="modal">
+  <div class="modal-content">
+      <h2>🎉 Thanh toán thành công!</h2>
+      <p>Bạn muốn làm gì tiếp theo?</p>
+      <dv class="modal-buttons">
+        <a href="{% url 'cart' %}"><button id="goToCartBtn" class="btn">🛒 Quay lại giỏ hàng</button></a>
+        <a href="{% url 'profile' %}"><button id="goToOrdersBtn" class="btn btn-primary">📜 Xem lịch sử đơn hàng</button>
+        </dv></a>
+  </div>
+</div>
+
+<!-- Container thông báo -->
+<div
+  id="notification-container"
+  style="position: fixed; top: 20px; right: 20px"
+></div>
+
+<script>
+  // Ẩn/hiện cổng thanh toán online với hiệu ứng mượt mà
+document.querySelectorAll("input[name='phuong_thuc_tt']").forEach((radio) => {
+  radio.addEventListener("change", function () {
+    const onlinePaymentMethods = document.getElementById("onlinePaymentMethods");
+    if (this.value === "online") {
+      onlinePaymentMethods.style.display = "block";
+      onlinePaymentMethods.classList.add('fade-in');
+    } else {
+      onlinePaymentMethods.classList.remove('fade-in');
+      onlinePaymentMethods.style.display = "none";
+    }
+  });
+
+
+    // Xử lý nút "Hủy" - Chuyển về trang giỏ hàng
+    document
+      .getElementById("cancelPayment")
+      .addEventListener("click", function () {
+        window.location.href = "/cart/";
+      });
+  });
+</script>
+
+<script>document.addEventListener("DOMContentLoaded", function () {
+  const confirmBtn = document.getElementById("confirmPayment");
+  const paymentForm = document.getElementById("paymentForm");
+  const csrfTokenElement = document.querySelector("input[name='csrfmiddlewaretoken']");
+  
+  if (!csrfTokenElement) {
+      alert("Lỗi hệ thống: Không tìm thấy CSRF token!");
+      return;
+  }
+  const csrfToken = csrfTokenElement.value;
+
+  async function getAuthToken() {
+      return localStorage.getItem("access_token");
+  }
+
+  async function refreshAuthToken() {
+      const refreshToken = localStorage.getItem("refresh_token");
+      if (!refreshToken) return null;
+      
+      const response = await fetch("/api/auth/refresh/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ refresh: refreshToken })
+      });
+      
+      if (response.ok) {
+          const newTokens = await response.json();
+          localStorage.setItem("access_token", newTokens.access);
+          return newTokens.access;
+      }
+      return null;
+  }
+
+  async function fetchWithAuth(url, options = {}) {
+      let authToken = await getAuthToken();
+      
+      options.headers = {
+          ...(options.headers || {}),
+          "Authorization": `Bearer ${authToken}`,
+          "X-CSRFToken": csrfToken
+      };
+      
+      let response = await fetch(url, options);
+      
+      if (response.status === 401) {
+          authToken = await refreshAuthToken();
+          if (!authToken) {
+              alert("Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại!");
+              window.location.href = "/login/";
+              return;
+          }
+          options.headers["Authorization"] = `Bearer ${authToken}`;
+          response = await fetch(url, options);
+      }
+      return response;
+  }
+
+  async function createOrder(selectedItems, paymentMethod, onlineMethod) {
+    try {
+        const response = await fetchWithAuth("/api/orders/create/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                items: selectedItems, // ✅ Đổi từ "cart_items" -> "items"
+                phuong_thuc_tt: paymentMethod,
+                phuong_thuc_online: onlineMethod
+            })
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+            return data.order_id; // Trả về ID của đơn hàng mới tạo
+        } else {
+            alert(data.error || "Đặt hàng thất bại!");
+            return null;
+        }
+    } catch (error) {
+        console.error("Lỗi khi tạo đơn hàng:", error);
+        alert("Có lỗi xảy ra khi tạo đơn hàng, vui lòng thử lại!");
+        return null;
+    }
+}
+
+  async function processPayment(orderId, paymentMethod, onlineMethod) {
+      try {
+          const response = await fetchWithAuth("/api/orders/payment/", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                  don_hang_ids: [orderId],
+                  phuong_thuc_tt: paymentMethod,
+                  cong_thanh_toan: onlineMethod
+              })
+          });
+
+          const result = await response.json();
+            if (response.ok) {
+                document.getElementById("paymentSuccessModal").style.display = "flex";
+
+                // Xử lý sự kiện khi người dùng chọn hành động
+                document.getElementById("goToCartBtn").addEventListener("click", function() {
+                    window.location.href = "/cart/"; // Quay lại giỏ hàng
+                });
+
+                document.getElementById("goToOrdersBtn").addEventListener("click", function() {
+                    window.location.href = "/profile/orders/"; // Đến lịch sử đơn hàng
+                });
+            } else {
+                alert("❌ Lỗi: " + (result.error || "Có lỗi xảy ra!"));
+            }
+      } catch (error) {
+          console.error("Lỗi khi thanh toán:", error);
+          alert("Có lỗi xảy ra, vui lòng thử lại!");
+      }
+  }
+
+  confirmBtn.addEventListener("click", async function (event) {
+      event.preventDefault();
+
+      const authToken = await getAuthToken();
+      if (!authToken) {
+          alert("Bạn chưa đăng nhập. Vui lòng đăng nhập để tiếp tục.");
+          window.location.href = "/login/";
+          return;
+      }
+
+      const selectedMethod = document.querySelector("input[name='phuong_thuc_tt']:checked")?.value;
+      const onlineMethod = document.querySelector("input[name='phuong_thuc_online']:checked")?.value || null;
+      const selectedItems = Array.from(document.querySelectorAll("tbody tr"), row => ({
+          san_pham_id: row.dataset.id,
+          so_luong: row.dataset.quantity
+      }));
+
+      if (!selectedMethod || selectedItems.length === 0) {
+          alert("Vui lòng chọn phương thức thanh toán và ít nhất một sản phẩm!");
+          return;
+      }
+      if (selectedMethod === "online" && !onlineMethod) {
+          alert("Vui lòng chọn cổng thanh toán!");
+          return;
+      }
+
+      confirmBtn.disabled = true;
+      confirmBtn.innerText = "Đang xử lý...";
+
+      try {
+          // 🛒 **BƯỚC 1: Tạo đơn hàng**
+          const orderId = await createOrder(selectedItems, selectedMethod, onlineMethod);
+          if (!orderId) {
+              confirmBtn.disabled = false;
+              confirmBtn.innerText = "✅ Thanh toán";
+              return;
+          }
+
+          // 💳 **BƯỚC 2: Thanh toán đơn hàng vừa tạo**
+          await processPayment(orderId, selectedMethod, onlineMethod);
+      } finally {
+          confirmBtn.disabled = false;
+          confirmBtn.innerText = "✅ Thanh toán";
+      }
+  });
+
+});
+</script>
+{% endblock %}

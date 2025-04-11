@@ -1,0 +1,463 @@
+{% extends 'home.html' %}
+{% block title %}Sản phẩm | The Goat Shop{% endblock %}
+{% block content %}
+
+<style>
+.container {
+    max-width: 1900px ;
+
+}
+.navbar {
+    position: relative;
+    z-index: 1000; /* Đảm bảo navbar nằm trên cùng */
+}
+
+.filter-section {
+    background: linear-gradient(135deg, #f8f9fa, #d6e4f0);
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 3px 3px 15px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease-in-out;
+}
+.filter-section:hover {
+    transform: scale(1.02);
+}
+.filter-section h3 {
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+    color: #0056b3;
+    margin-bottom: 15px;
+}
+.filter-section label {
+    font-weight: 600;
+    margin-top: 12px;
+    display: block;
+    color: #333;
+}
+.filter-section select, .filter-section input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    transition: border 0.3s ease-in-out;
+}
+.filter-section select:focus, .filter-section input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+.product-item {
+    padding: 15px;
+    transition: all 0.3s ease-in-out;
+}
+.best_shoes1 {
+    height: 445px;
+    width: 95%; 
+    background: #f7f7f7;
+    padding: 20px;
+    border-radius: 20px;
+    text-align: center;
+    border: 1px solid #ddd;
+
+}
+
+
+.best_shoes1:hover{
+    box-shadow: 15px 15px 8px rgba(94, 94, 94, 0.514);
+    transform: scale(1.02);
+}
+
+.best_text {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #444;
+}
+.shoes_icon img {
+    height: 280px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+.shoes_price {
+    font-size: 20px;
+    font-weight: bold;
+    color: #d9534f;
+    margin-top: 8px;
+}
+
+.col-md-9{
+    background: #ffeac3ba;
+}
+
+.buy-btn {
+    background-color: #ff4d00;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    display: block;
+    width: 50%;
+    text-align: center;
+    margin: 20px auto;
+
+
+}
+
+.buy-btn:hover {
+    background-color: #34ff7b; /* Màu đậm hơn khi hover */
+    transform: scale(1.05);
+    color: black;
+}
+
+.buy-btn:active {
+    background-color: #b02e00; /* Màu tối hơn khi nhấn */
+    transform: scale(0.98);
+}
+nav.navbar.navbar-expand-lg.navbar-light.bg-light {
+    float: inline-end;
+}
+.logo {
+
+    margin-left: 30%;
+}
+/* Ẩn modal ban đầu */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0); /* Làm mờ nền */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin:auto;
+}
+div#logoutModal {
+    position: fixed;
+    z-index: -1;
+}
+/* Nội dung modal */
+.modal-content {
+    background: white;
+    width: 650px;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+    animation: fadeIn 0.3s ease-in-out;
+    display: flex;
+    flex-direction: row; /* Ảnh bên trái, thông tin bên phải */
+    gap: 20px;
+    align-items: center;
+    height: 470px;
+}
+
+/* Hiệu ứng mở modal */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Ảnh sản phẩm */
+.modal-content img {
+    width: 250px;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Khung chứa thông tin sản phẩm */
+.modal-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Tiêu đề */
+.modal-info h2 {
+    font-size: 25px;
+    color: #333;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+/* Nội dung thông tin */
+.modal-info p {
+    font-size: 20px;
+    color: #555;
+    margin: 2px 0;
+}
+
+/* Giá gốc (gạch ngang) */
+.old-price {
+    text-decoration: line-through;
+    color: #888;
+    font-size: 15px;
+}
+
+/* Giá khuyến mãi */
+.new-price {
+    color: #e63946;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Nhãn số lượng */
+.modal-info label {
+    font-size: 20px;
+    font-weight: bold;
+    display: block;
+    margin-top: 10px;
+}
+
+/* Ô nhập số lượng */
+.modal-info input[type="number"] {
+    width: 100px;
+    padding: 5px;
+    font-size: 20px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    margin-top: 5px;
+    margin-left: 10px;
+}
+
+/* Nút bấm */
+.modal-buttons {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+}
+
+.confirm-btn, .cancel-btn {
+    padding: 10px 15px;
+    border: none;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+    width: 100px;
+    font-weight: bold;
+}
+
+.confirm-btn {
+    background-color: #28a745;
+    color: white;
+}
+
+.confirm-btn:hover {
+    background-color: #19ff4b;
+}
+
+.cancel-btn {
+    background-color: #c60114;
+    color: white;
+}
+
+.cancel-btn:hover {
+    background-color: #ff263c;
+}
+
+.thuonghieu {
+    float: left;
+    font-size: 20px;
+    font-weight: 800;
+    font-family: emoji;
+    color: blueviolet;
+    background: #f3e8ff; /* Nền nhẹ cho đẹp hơn */
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #4caf50;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out;
+    z-index: 1000;
+}
+
+.notification.error {
+    background-color: #e74c3c;
+}
+
+.notification.success {
+    background-color: #2ecc71;
+}
+
+.buy-btn:not([disabled]) {
+    background-color: #ff5722;
+    color: white;
+}
+
+.buy-btn[disabled] {
+    background-color: #656565; /* Màu nền tối */
+    color: #ff6565; /* Màu chữ xám */
+    cursor: not-allowed;
+}
+.product-item.out-of-stock img {
+    filter: grayscale(100%) brightness(50%); /* Làm mờ và tối ảnh */
+    opacity: 0.5; /* Giảm độ trong suốt */
+}
+a.nav-item.nav-link.sanpham {
+    color: #00ffd4;
+    font-weight: bolder;
+    text-decoration: underline !important;
+}
+
+.login-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 25px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    border-radius: 12px;
+    width: 450px; /* Giữ kích thước cố định */
+    max-width: 90%;
+
+    height: auto;
+    min-height: 200px;
+}
+
+.login-popup p {
+    font-size: 16px;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
+.login-popup button {
+    width: 120px;
+    padding: 12px;
+    margin: 10px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    border-radius: 6px;
+    transition: 0.3s;
+}
+
+#login-btn {
+    background-color: #28a745;
+    color: white;
+}
+
+#login-btn:hover {
+    background-color: #218838;
+}
+
+#cancel-btn {
+    background-color: #dc3545;
+    color: white;
+}
+
+#cancel-btn:hover {
+    background-color: #c82333;
+}
+
+</style>
+<div class="collection_text" style="margin-top: 1%; padding: 20px 0;">Sản Phẩm</div>
+<div style="background-color: #ffffff; padding-top: 20px; margin-top: 3%;">
+    <div class="container">
+        <div style="padding: 0px;">
+            <div class="row mt-3">
+                <div class="col-md-3">
+                    <div class="filter-section">
+                        <h3>Bộ Lọc</h3>
+                        <label for="search-input">Tìm kiếm sản phẩm:</label>
+                        <input type="text" id="search-input" placeholder="Nhập tên sản phẩm...">
+                        
+                        <label for="sort-filter">Sắp xếp giá:</label>
+                        <select id="sort-filter">
+                            <option value="">Sắp xếp</option>
+                            <option value="price_asc">Giá (từ thấp đến cao)</option>
+                            <option value="price_desc">Giá (từ cao đến thấp)</option>
+                            <option value="name">Tên sản phẩm</option>
+                        </select>
+                                             
+                        
+                        <label for="brand-filter">Hãng sản xuất:</label>
+                            <select id="brand-filter">
+                                <option value="">Tất cả các hãng</option>
+                                <!-- Các option sẽ được điền vào bằng JavaScript -->
+                            </select>
+
+                            <label for="category-filter">Thể loại:</label>
+                            <select id="category-filter">
+                                <option value="">Tất cả các thể loại</option>
+                                <!-- Các option sẽ được điền vào bằng JavaScript -->
+                            </select>
+                    </div>
+                </div>
+                
+                <div class="col-md-9">
+                    <div class="row" id="productallall"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- New Arrivals section start -->
+
+
+<!-- Modal chọn số lượng -->
+<div id="quantity-modal" class="modal">
+    <div class="modal-content">
+        <!-- Hình ảnh sản phẩm -->
+        <img id="modal-product-img" src="" alt="Sản phẩm">
+        
+        <!-- Thông tin sản phẩm -->
+        <div class="modal-info">
+            <h2>Chọn số lượng</h2>
+            <p><strong>Tên sản phẩm:</strong> <span id="modal-product-name"></span></p>
+            
+            <!-- Hiển thị giá -->
+            <p><strong>Giá:</strong> 
+                <span class="old-price" id="modal-product-old-price"></span>
+                <span class="new-price" id="modal-product-price"></span>
+            </p>
+
+            <p><strong>Thương hiệu:</strong> <span id="modal-product-brand"></span></p>
+            <p><strong>Danh mục:</strong> <span id="modal-product-category"></span></p>
+            
+            <label for="modal-quantity">Số lượng:
+                <input type="number" id="modal-quantity" min="1" value="1">
+            </label>
+            <!-- Nút xác nhận và hủy -->
+            <div class="modal-buttons">
+                <button id="confirm-buy-btn" class="confirm-btn">Xác nhận</button>
+                <button onclick="closeQuantityModal()" class="cancel-btn">Hủy</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="notification-container" style="position: fixed; top: 20px; right: 20px; z-index: 9999;"></div>
+<p id="quantity-error-msg" style="color: red; font-size: 14px; margin-top: 5px;"></p>
+
+
+<script src="../static/js/product.js"></script>
+
+{% endblock %}

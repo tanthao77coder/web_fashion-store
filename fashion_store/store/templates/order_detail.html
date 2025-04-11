@@ -1,0 +1,110 @@
+{% extends 'home.html' %}
+{% load static %}
+{% block title %}Chi Tiết Đơn Hàng | The Goat Shop{% endblock %}
+{% block content %}
+
+<style>
+.order-container {
+    max-width: 900px;
+    margin: auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.order-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.order-info p, .customer-info p {
+    font-size: 16px;
+    margin: 5px 0;
+}
+
+.order-status {
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.product-list {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+.product-list th, .product-list td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+}
+
+.product-list img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.cancel-button {
+    display: block;
+    background: red;
+    color: white;
+    padding: 10px 15px;
+    text-align: center;
+    border-radius: 8px;
+    text-decoration: none;
+    margin-top: 20px;
+}
+.cancel-button:hover {
+    background: darkred;
+}
+</style>
+
+<div class="order-container">
+    <div class="order-header">
+        <h2>Chi Tiết Đơn Hàng #{{ order.id }}</h2>
+    </div>
+    
+    <div class="order-info">
+        <p><strong>Ngày đặt:</strong> {{ order.created_at }}</p>
+        <p><strong>Tổng tiền:</strong> {{ order.total_amount|floatformat:"0" }} ₫</p>
+        <p class="order-status"><strong>Trạng thái:</strong> {{ order.get_status_display }}</p>
+    </div>
+    
+    <div class="customer-info">
+        <h3>Thông Tin Người Nhận</h3>
+        <p><strong>Tên:</strong> {{ order.customer_name }}</p>
+        <p><strong>Số điện thoại:</strong> {{ order.customer_phone }}</p>
+        <p><strong>Địa chỉ:</strong> {{ order.customer_address }}</p>
+    </div>
+    
+    <h3>Danh Sách Sản Phẩm</h3>
+    <table class="product-list">
+        <thead>
+            <tr>
+                <th>Hình ảnh</th>
+                <th>Sản phẩm</th>
+                <th>Số lượng</th>
+                <th>Giá</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in order.items.all %}
+            <tr>
+                <td><img src="{{ item.product.image.url }}" alt="{{ item.product.name }}"></td>
+                <td>{{ item.product.name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.total_price|floatformat:"0" }} ₫</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    {% if order.status == "dang_xu_ly" or order.status == "cho_giao_hang" %}
+    <a href="{% url 'cancel_order' order.id %}" class="cancel-button">Hủy Đơn Hàng</a>
+    {% endif %}
+</div>
+
+{% endblock %}

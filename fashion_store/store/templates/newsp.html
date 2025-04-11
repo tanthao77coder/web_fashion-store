@@ -1,0 +1,497 @@
+{% extends 'home.html' %} {% block title %}Sản phẩm mới | The Goat Shop{% endblock%}
+{% block content %}
+
+<style>
+
+.collection_section{ width: 100%; float: left; padding-bottom: 0px; }
+.new_text{
+	width: 100%;
+	float: left;
+	font-size: 24pt;
+	color: #0c0116;
+}
+
+.consectetur_text{
+	width: 100%;
+	float: left;
+	font-size: 14pt;
+	color: #0c0116;
+	font-weight: 400;
+	margin-left: 0px;
+    padding-bottom: 30px;
+}
+
+.collection_section_2{
+	width: 100%;
+	float: left;
+}
+
+.about-img {
+    width: 100%;
+    float: left;
+    background-color: #ffffff;
+    height: auto;
+    margin-left: 64px;
+    box-shadow: 0px 0px 10px 0px;
+    position: relative;
+    z-index: 1;
+}
+.new_bt{
+	width: 18%;
+	float: left;
+	background-color: #000;
+	font-size: 14pt;
+	text-align: center;
+	color: #ffffff;
+	height: 50px;
+	margin-left: -60px;
+	border-radius: 0;
+}
+
+.shoes-img{
+	width: 100%;
+	float: left;
+	text-align: center;
+	padding-top: 40px;
+	padding-bottom: 40px;
+	margin: 0px;
+}
+
+.sport_text {
+    width: 50%;
+    text-align: center;
+    padding-top: 30px;
+    font-size: 16pt;
+    color: #0c0116;
+    border-bottom: 1px solid#000;
+    margin: 0 auto;
+}
+.dolar_text{
+	width: 100%;
+	float: left;
+	text-align:center;
+	color: #000;
+	font-size: 20pt;
+}
+.star_icon{ width: 25%; margin: 0 auto; text-align: center; }
+.star_icon ul{ margin: 0px; padding: 0px;} 
+.star_icon li{ float:left; padding-right:10px; padding-bottom: 25px;}
+
+.about-img2{
+	width: 100%;
+	float: left;
+	background-image: url(../static/images/about-img2.png) !important;
+	height: auto;
+	box-shadow: 0px 0px 10px 0px;
+	margin-left: -50px;
+    margin-top: 74px;
+}
+
+
+.shoes_img{ width: 100%; float: left; padding-top: 30px; }
+
+.shoes-img2{
+	width: 100%;
+	float: left;
+	text-align: center;
+	padding-top: 100px;
+	padding-bottom: 40px;
+	margin: 0px
+}
+
+.seemore_bt{
+	width: 32%;
+	height: 50px;
+	color: #ffffff;
+	background-color: #ff4e5b;
+	color: #ffffff;
+	font-size: 16pt;	
+	margin-top: 35px;
+    margin-bottom: 90px;
+}
+
+.img1 {
+    max-width: 100%;
+    height: 260px;
+    transition: transform 0.3s ease-in-out; /* Hiệu ứng mượt */
+}
+
+.img1:hover {
+    transform: scale(1.8); /* Phóng to ảnh khi hover */
+}
+
+
+@media (min-width: 768px) {
+    .col-md-6 {
+        -ms-flex: 0 0 50%;
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+}
+
+a.nav-item.nav-link.bestsales {
+    color: #00ffd4;
+    font-weight: bolder;
+    text-decoration: underline !important;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translate(-50%, -55%); }
+    to { opacity: 1; transform: translate(-50%, -50%); }
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    margin: 6% auto;
+    width: 90%;
+    max-width: 50%;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.modal-content {
+    text-align: center;
+}
+
+.close {
+    float: right;
+    font-size: 20px;
+    cursor: pointer;
+    color: #555;
+}
+.close:hover {
+    color: #f12a47;
+}
+
+/* Bố cục sản phẩm */
+.product-options {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin: 10px 0;
+}
+
+.product-option {
+    text-align: center;
+    padding: 15px;
+    border-radius: 8px;
+    background: #f9f9f9;
+    transition: transform 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.product-option:hover {
+    transform: scale(1.05);
+}
+
+/* Ảnh sản phẩm */
+.modal-img {
+    width: 80%;
+    max-width: 250px;
+    height: auto;
+    border-radius: 5px;
+}
+
+/* Chọn số lượng */
+.quantity-selection {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.quantity-input {
+    width: 60px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 5px;
+    font-size: 18px;
+}
+
+/* Nút tăng giảm */
+.decrease, .increase {
+    width: 35px;
+    height: 35px;
+    background: #ddd;
+    border-radius: 50%;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.decrease:hover, .increase:hover {
+    background: #bbb;
+}
+.decrease:active, .increase:active {
+    transform: scale(0.9);
+}
+
+/* Nút xác nhận */
+#confirmPurchase {
+    background: #f12a47;
+    color: white;
+    font-weight: bold;
+    width: 60%;
+    font-size: 18px;
+    margin: 10px auto;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .modal {
+        width: 95%;
+        max-width: 90%;
+    }
+    .product-options {
+        grid-template-columns: repeat(1, 1fr);
+    }
+}
+.login-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 25px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    border-radius: 12px;
+    width: 450px; /* Giữ kích thước cố định */
+    max-width: 90%;
+
+    height: auto;
+    min-height: 200px;
+}
+
+.login-popup p {
+    font-size: 16px;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
+.login-popup button {
+    width: 120px;
+    padding: 12px;
+    margin: 10px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    border-radius: 6px;
+    transition: 0.3s;
+}
+
+#login-btn {
+    background-color: #28a745;
+    color: white;
+}
+
+#login-btn:hover {
+    background-color: #218838;
+}
+
+#cancel-btn {
+    background-color: #dc3545;
+    color: white;
+}
+
+#cancel-btn:hover {
+    background-color: #c82333;
+}
+
+</style>
+
+	<!-- new collection section start -->
+    <div class="collection_text" style="margin-top: 1%; padding: 20px 0;">Best - Sales</div>
+    <div class="layout_padding collection_section" style="background-color: aliceblue;">
+    	<div class="container">
+    	    <h1 class="new_text"><strong>✨ Săn deal sốc – Mua sắm thả ga! ✨</strong></h1>
+    	    <p class="consectetur_text">Với thiết kế tinh tế và chất liệu cao cấp, những sản phẩm này không chỉ mang đến sự thoải mái mà còn giúp bạn tỏa sáng với phong cách ấn tượng. Đẹp mắt, bền bỉ, tiện dụng – tất cả đều có mức giá ưu đãi chưa từng có. Nhanh tay sở hữu ngay hôm nay!</p>
+			<div class="collection_section_2">
+				<div class="row one">
+					{% for product in top_discount_products %}
+						{% if forloop.first %}
+							<!-- Sản phẩm có giảm giá cao nhất -->
+							<div class="col-md-6">
+								<div class="about-img">
+									<button class="new_bt">New</button>
+									<div class="shoes-img">
+										<img class="img1" src="{{ product.hinh_anh }}" alt="{{ product.ten_san_pham }}">
+									</div>
+									<p class="sport_text">{{ product.ten_san_pham }}</p>
+									<div class="dolar_text">
+										<span class="original-price">${{ product.gia }}</span>
+										<strong style="color: #f12a47;">${{ product.get_final_price }}</strong>
+									</div>
+								</div>
+								<button class="seemore_bt" data-product-id="{{ product.id }}">Mua ngay</button>
+							</div>
+						{% else %}
+							<!-- Sản phẩm có giảm giá lớn thứ hai -->
+							<div class="col-md-6">
+								<div class="about-img2">
+									<div class="shoes-img2">
+										<img class="img1" src="{{ product.hinh_anh }}" alt="{{ product.ten_san_pham }}">
+									</div>
+									<p class="sport_text">{{ product.ten_san_pham }}</p>
+									<div class="dolar_text">
+										<span class="original-price">${{ product.gia }}</span>
+										<strong style="color: #f12a47;">${{ product.get_final_price }}</strong>
+									</div>
+								</div>
+                                <button class="seemore_bt" data-product-id="{{ product.id }}">Mua ngay</button>
+							</div>
+						{% endif %}
+					{% endfor %}
+				</div>
+			</div>			
+    	</div>
+    </div>
+    
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".seemore_bt").forEach(button => {
+        button.addEventListener("click", async function () {
+            const token = localStorage.getItem("access_token");
+
+            if (!token) {
+                console.log("Người dùng chưa đăng nhập, hiển thị popup");
+                showLoginPopup();
+                return;
+            }
+
+            const productId = this.getAttribute("data-product-id");
+            if (!productId) {
+                showNotification("⚠️ Không tìm thấy ID sản phẩm!", "error");
+                return;
+            }
+
+            console.log("📌 Product ID:", productId);
+
+            try {
+                const response = await fetch("/api/cart/add/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        san_pham_id: productId, 
+                        so_luong: 1
+                    })
+                });
+
+                const data = await response.json();
+                console.log("📤 Response từ server:", response.status, data);
+
+                if (response.status === 201) {
+                    showNotification("✅ Sản phẩm đã được thêm vào giỏ hàng!", "success");
+                } else {
+                    showNotification("⚠️ Lỗi: " + (data.error || "Không thể thêm sản phẩm."), "error");
+                }
+            } catch (error) {
+                console.error("❌ Lỗi kết nối:", error);
+                showNotification("❌ Lỗi kết nối! Vui lòng thử lại.", "error");
+            }
+        });
+    });
+});
+
+// Hàm hiển thị thông báo
+function showNotification(message, type) {
+    const notification = document.createElement("div");
+    notification.classList.add("notification");
+    notification.textContent = message;
+    
+    // Thêm kiểu cho thông báo tùy theo loại (success, error)
+    notification.style.position = "fixed";
+    notification.style.top = "10px";
+    notification.style.right = "10px";  // Di chuyển thông báo sang góc phải
+    notification.style.padding = "10px 20px";
+    notification.style.backgroundColor = type === "success" ? "#28a745" : "#dc3545";
+    notification.style.color = "white";
+    notification.style.borderRadius = "5px";
+    notification.style.fontSize = "14px";
+    notification.style.boxShadow = "0 4px 6px rgba(0, 0, 0, 0.1)";
+    notification.style.zIndex = "1001";
+    notification.style.opacity = "0";
+    notification.style.transition = "opacity 0.5s";
+
+    document.body.appendChild(notification);
+
+    // Hiển thị thông báo
+    setTimeout(() => {
+        notification.style.opacity = "1";
+    }, 100);
+
+    // Ẩn thông báo sau 3 giây
+    setTimeout(() => {
+        notification.style.opacity = "0";
+        setTimeout(() => {
+            notification.remove();
+        }, 500);
+    }, 3000);
+}
+
+// 🛑 Hiển thị popup yêu cầu đăng nhập
+function showLoginPopup() {
+    // Overlay nền mờ
+    const overlay = document.createElement("div");
+    overlay.style.position = "fixed";
+    overlay.style.top = "0";
+    overlay.style.left = "0";
+    overlay.style.width = "100%";
+    overlay.style.height = "100%";
+    overlay.style.backgroundColor = "rgba(0, 0, 0, 0.4)";
+    overlay.style.zIndex = "999";
+
+    // Popup đăng nhập
+    const loginPopup = document.createElement("div");
+    loginPopup.classList.add("login-popup");
+    loginPopup.style.position = "fixed";
+    loginPopup.style.top = "50%";
+    loginPopup.style.left = "50%";
+    loginPopup.style.transform = "translate(-50%, -50%)";
+    loginPopup.style.padding = "20px";
+    loginPopup.style.background = "white";
+    loginPopup.style.borderRadius = "10px";
+    loginPopup.style.boxShadow = "0 5px 15px rgba(0,0,0,0.3)";
+    loginPopup.style.zIndex = "1000";
+    loginPopup.innerHTML = `
+        <p><strong>Bạn cần đăng nhập để mua hàng.</strong></p>
+        <button id="login-btn" style="margin-right: 10px;">Đăng nhập</button>
+        <button id="cancel-btn">Hủy</button>
+    `;
+
+    document.body.appendChild(overlay);
+    document.body.appendChild(loginPopup);
+
+    // Nút "Đăng nhập"
+    document.getElementById("login-btn").addEventListener("click", function () {
+        console.log("Chuyển hướng đến trang đăng nhập");
+        window.location.href = "/login/";
+    });
+
+    // Nút "Hủy"
+    document.getElementById("cancel-btn").addEventListener("click", function () {
+        console.log("Đóng popup");
+        overlay.remove();
+        loginPopup.remove();
+    });
+}
+
+	</script>
+	
+{% endblock %}

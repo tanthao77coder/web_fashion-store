@@ -1,0 +1,97 @@
+{% extends "home.html" %}
+{% load static %}
+{% block title %}Liên hệ | The Goat Shop{% endblock %}
+{% block content %}
+<style>
+/* Căn giữa nội dung và giới hạn max width */
+.container {
+    max-width:1400px;
+    margin: auto;
+    padding-bottom: 20px;
+}
+
+/* Tiêu đề trang */
+h1.text-center {
+    font-size: 36px;
+    font-weight: bold;
+    color: #007bff;
+}
+
+/* Chữ mô tả */
+p.text-center.text-muted {
+    font-size: 18px;
+}
+
+/* Tạo kiểu cho card */
+.card {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Button */
+.btn-primary {
+    font-size: 18px;
+    font-weight: 600;
+    border-radius: 8px;
+}
+
+/* Căn chỉnh khoảng cách */
+.mb-3 label {
+    font-weight: 600;
+}
+
+a.nav-item.nav-link.lienhe {
+    color: #00ffd4;
+    font-weight: bolder;
+    text-decoration: underline !important;
+}
+</style>
+<div class="collection_text" style="margin-top: 0; padding: 20px 0; margin-bottom: 20px;">Liên Hệ Với Chúng Tôi</div>
+<div style="background-color: #fff;">
+  <div class="container">
+    <div class="row mt-4">
+      <!-- Form liên hệ -->
+      <div class="col-lg-6">
+        <div class="card p-4">
+          <h4 class="text-primary mb-4 text-center">Gửi tin nhắn</h4>
+          <form action="{% url 'contact' %}" method="POST">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="name" class="form-label">Họ và Tên</label>
+              <input type="text" id="name" name="name" class="form-control" placeholder="Nhập tên của bạn" required />
+            </div>
+            <div class="mb-3">
+              <label for="phone" class="form-label">Số điện thoại</label>
+              <input type="text" id="phone" name="phone" class="form-control" placeholder="Nhập số điện thoại" required />
+            </div>
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input type="email" id="email" name="email" class="form-control" placeholder="Nhập email của bạn" required />
+            </div>
+            <div class="mb-3">
+              <label for="message" class="form-label">Tin nhắn</label>
+              <textarea id="message" name="message" class="form-control" rows="4" placeholder="Nhập nội dung tin nhắn" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary w-100 mt-3">Gửi Tin Nhắn</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Thông tin liên hệ -->
+      <div class="col-lg-6">
+        <div class="card p-4 bg-light">
+          <h4 class="text-primary mb-4 text-center">Thông Tin Cửa Hàng</h4>
+          <p><strong>📍 Địa chỉ:</strong> Số 40, Đường ABC, TP. Hồ Chí Minh</p>
+          <p><strong>📞 Hotline:</strong> 0123-456-789</p>
+          <p><strong>📧 Email:</strong> support@shopgiaydep.com</p>
+          <p><strong>🕒 Giờ làm việc:</strong> 8:00 - 21:00 (Thứ 2 - Chủ nhật)</p>
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3918.847872863919!2d106.70531681480069!3d10.823098292290932!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x317528cde4b6d7e9%3A0x7876e8d515d6bb0!2sHo%20Chi%20Minh%20City%2C%20Vietnam!5e0!3m2!1sen!2s!4v1630910789285!5m2!1sen!2s"
+            width="100%" height="250" style="border: 0" allowfullscreen="" loading="lazy"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

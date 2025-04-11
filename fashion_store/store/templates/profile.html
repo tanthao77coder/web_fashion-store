@@ -1,0 +1,529 @@
+{% extends 'home.html' %}
+{% load static %}
+{% block title %}Profile | The Goat Shop{% endblock %}
+{% block content %}
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #ffe9e9;
+  margin: 0;
+  padding: 0;
+}
+
+/* Container chính */
+.profile-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 20px;
+  max-width: 1800px;
+  margin: auto;
+}
+
+/* Sidebar chứa thông tin người dùng */
+.sidebar {
+  width: 320px;
+  padding: 25px;
+  background: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease-in-out;
+  height: 300px;
+}
+
+.sidebar:hover {
+  box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.2);
+  transform: translateY(-3px);
+}
+
+.sidebar h3 {
+  text-align: center;
+  font-size: 22px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+/* Ảnh đại diện */
+.profile-info img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 12px;
+  border: 3px solid #ddd;
+  transition: transform 0.3s ease-in-out;
+}
+
+.profile-info img:hover {
+  transform: scale(1.08);
+}
+
+.profile-info p {
+  font-size: 20px;
+  color: #555;
+  margin: 20px 0;
+}
+
+.profile-info a {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 10px 18px;
+  background: #4A90E2;
+  color: white;
+  font-weight: bold;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: all 0.3s ease-in-out;
+}
+
+.profile-info a:hover {
+  background: #00ff91;
+  color: black;
+  transform: scale(1.05);
+}
+
+/* Danh sách đơn hàng */
+#order-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* Mỗi đơn hàng */
+.order-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Giúp hr luôn nằm trên nút Chi tiết */
+    width: 325px; /* Đảm bảo các đơn hàng có cùng chiều rộng */
+    height: 361px; /* Đảm bảo các đơn hàng có chiều cao bằng nhau */
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    border: 1px solid #ddd;
+}
+
+.order-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.order-item h4 {
+  margin-top: 0;
+    font-size: 20px;
+    color: #333;
+    text-align: center;
+    font-weight: 600;
+}
+
+.order-item p {
+  margin: 8px 0;
+  color: #666;
+  font-size: 16px;
+}
+
+.order-item hr {
+    margin: 15px 0;
+    border: none;
+    border-top: 5px solid #ff85c1;
+}
+
+/* Nút chi tiết đơn hàng */
+.detail-button {
+  display: inline-block;
+  padding: 10px 18px;
+  background-color: #4A90E2;
+  color: #fff;
+  text-decoration: none;
+  text-align: center;
+  border-radius: 10px;
+  transition: background-color 0.3s ease, transform 0.3s ease-in-out;
+  font-size: 0.95rem;
+  font-weight: bold;
+  margin-top: auto;
+}
+
+.detail-button:hover {
+  background-color: #00ff91;
+  transform: scale(1.08);
+  color: black;
+}
+
+
+/* Responsive cho mobile */
+@media (max-width: 768px) {
+  .profile-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .sidebar {
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .order-item {
+    flex: 1 1 100%;
+  }
+}
+
+a.nav-item.trangcanhan {
+				color: #00ffd4 !important ;
+				font-weight: bolder;
+				text-decoration: underline !important;
+			}
+
+  /* CSS cho modal */
+  .modal1 {
+    display: none; /* Ẩn modal mặc định */
+    position: fixed;
+    z-index: 1050;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+
+  .modal1 > .modal-content {
+    background: linear-gradient(129deg, #ffe4b6, #ccfffd);
+    margin: 7% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 30%;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 40px;
+    font-weight: bold;
+    color: #555;
+    cursor: pointer;
+    z-index: 1000;
+}
+  .close:hover,
+  .close:focus {
+    color: red;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  h2, h3 {
+    text-align: center;
+    font-size: 25px;
+    font-weight: bold;
+}
+.modal-content p {
+    margin: 15px 30px;
+    font-weight: revert-layer;
+    font-size: 20px;
+    line-height: 25px;
+}
+/* Thiết kế bảng giống Excel */
+#modal-items table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 18px; /* Cập nhật font-size */
+}
+
+/* Header của bảng */
+#modal-items th {
+    background-color: #00d78f;
+    color: white;
+    padding: 10px;
+    text-align: left;
+    font-size: 18px;
+    text-align: center;
+}
+
+/* Dòng của bảng */
+#modal-items td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+    font-size: 18px; /* Font-size cho nội dung */
+}
+
+/* Hiệu ứng hover */
+#modal-items tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Bo tròn góc bảng */
+#modal-items table {
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+tbody tr:nth-child(odd) td {
+    background: #ffffff; /* Màu nền xám nhạt cho ô lẻ */
+}
+
+</style>
+<div style="background-color: #ffe9e9;margin-top: 1%;">
+
+  <div class="container-fluid py-4">
+    <div class="profile-container">
+      <!-- Sidebar thông tin người dùng -->
+      <div class="sidebar">
+        <h3>Thông tin người dùng</h3>
+        <div class="profile-info">
+          <img src="path/to/user/avatar.jpg" alt="Avatar" id="user-avatar">
+          <p><strong>Người dùng: </strong><span id="user-name">Tên người dùng</span></p>
+          <p><strong>Email:</strong> <span id="user-email">email@example.com</span></p>
+          <p><strong>Địa chỉ:</strong> <span id="user-address">Chưa cập nhật</span></p>
+        </div>
+      </div>    
+  
+      <!-- Danh sách đơn hàng -->
+      <div style="flex: 1;">
+        <h2 class="text-center mb-4">Lịch Sử Đơn Hàng</h2>
+        <!-- Bộ lọc trạng thái -->
+        <div style="text-align: center; margin-bottom: 20px;">
+          <label for="order-filter" style="font-weight: bold; font-size: 18px;">Lọc theo trạng thái:</label>
+          <select id="order-filter" class="form-control" style="width: 200px; display: inline-block; margin-left: 10px; border-radius: 15px;">
+              <option value="all">Tất cả</option>
+              <option value="dang_xu_ly">Đang xử lý</option>
+              <option value="da_xu_ly">Đã xử lý</option>
+              <option value="cho_giao_hang">Chờ giao hàng</option>
+              <option value="dang_giao_hang">Đang giao hàng</option>
+              <option value="da_giao_hang">Đã giao hàng</option>
+              <option value="da_huy">Đã hủy</option>
+          </select>
+        </div>
+        <div id="order-list">
+          <!-- Danh sách đơn hàng sẽ được chèn vào đây bởi JavaScript -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal hiển thị chi tiết đơn hàng -->
+<div id="orderModal" class="modal1">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h2 >Chi tiết đơn hàng #<span id="modal-order-id"></span></h2>
+    <p><strong>Tổng tiền: </strong> <span id="modal-total"></span> ₫</p>
+    <p><strong>Phương thức thanh toán: </strong> <span id="modal-payment"></span></p>
+    <p><strong>Trạng thái: </strong> <span id="modal-status"></span></p>
+    <p><strong>Ngày tạo: </strong> <span id="modal-date"></span></p>
+    <div class="orderitem">
+      <h3>Danh sách sản phẩm</h3>
+      <ul id="modal-items"></ul>
+    </div>
+  </div>
+</div>
+
+<script>document.addEventListener("DOMContentLoaded", function () {
+  const accessToken = localStorage.getItem("access_token");
+
+  if (!accessToken) {
+      alert("Bạn chưa đăng nhập!");
+      window.location.href = "/login/";
+      return;
+  }
+  // ✅ Lấy thông tin người dùng
+    fetch('/api/auth/user/', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}` // ✅ Dùng backtick để truyền biến đúng cách
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById("user-name").textContent = data.username || "Chưa có tên";
+        document.getElementById("user-email").textContent = data.email || "Chưa có email";
+        document.getElementById("user-address").textContent = data.dia_chi || "Chưa cập nhật";
+        document.getElementById("user-avatar").src = data.avatar || "/static/default-avatar.png"; // Thêm ảnh mặc định
+    })
+    .catch(error => {
+        console.error("Lỗi khi tải thông tin người dùng:", error);
+        alert("Không thể tải thông tin người dùng.");
+    });
+
+
+
+  let allOrders = []; // Lưu danh sách đơn hàng gốc
+
+  // ✅ Hàm hiển thị đơn hàng
+  function displayOrders(filterStatus = "all") {
+    const orderListContainer = document.getElementById("order-list");
+    orderListContainer.innerHTML = ""; 
+
+    let filteredOrders = allOrders;
+    if (filterStatus !== "all") {
+        filteredOrders = allOrders.filter(order => order.status.toLowerCase() === filterStatus);
+    }
+
+    if (filteredOrders.length === 0) {
+        orderListContainer.innerHTML = "<p>Không có đơn hàng nào.</p>";
+        return;
+    }
+
+    filteredOrders.forEach(order => {
+        const orderDiv = document.createElement("div");
+        orderDiv.classList.add("order-item");
+
+        let statusColor = "gray";  
+        let statusText = "Không xác định";
+
+        if (order.status) {  
+            switch (order.status.toLowerCase()) {
+                case "dang_xu_ly": statusColor = "orange"; statusText = "Đang xử lý"; break;
+                case "da_xu_ly": statusColor = "purple"; statusText = "Đã xử lý"; break;
+                case "cho_giao_hang": statusColor = "blue"; statusText = "Chờ giao hàng"; break;
+                case "dang_giao_hang": statusColor = "teal"; statusText = "Đang giao hàng"; break;
+                case "da_giao_hang": statusColor = "green"; statusText = "Đã giao hàng"; break;
+                case "da_huy": statusColor = "red"; statusText = "Đã hủy"; break;
+            }
+        }
+
+        orderDiv.innerHTML = `
+          <h4>Đơn hàng #${order.id}</h4>
+          <p><strong>Tổng tiền:</strong> ${(order.total_amount || order.tong_tien).toLocaleString()} ₫</p>
+          <p><strong>Phương thức thanh toán:</strong> ${order.phuong_thuc_tt}</p>
+          <p><strong>Nền tảng thanh toán:</strong> 
+              ${order.phuong_thuc_tt.toLowerCase() === "cod" ? "Tiền mặt" : order.phuong_thuc_online}
+          </p>
+          <p><strong>Trạng thái:</strong> 
+              <span style="color: ${statusColor}; font-weight: bold; font-size: 18px;">${statusText}</span>
+          </p>
+          <p><strong>Ngày tạo:</strong> ${new Date(order.created_at).toLocaleString()}</p>
+          <hr>
+          <button class="detail-button" onclick="openModal(${order.id})">Chi tiết</button>
+      `;
+
+      orderListContainer.appendChild(orderDiv);
+
+    });
+}
+
+
+  // ✅ Gọi API lấy danh sách đơn hàng
+  fetch('/api/orders/', {
+      method: 'GET',
+      headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+      }
+  })
+  .then(response => response.json())
+  .then(data => {
+      allOrders = data || []; // Lưu danh sách đơn hàng
+      displayOrders(); // Hiển thị tất cả đơn hàng ban đầu
+  })
+  .catch(error => {
+      console.error("Lỗi khi tải đơn hàng:", error);
+      document.getElementById("order-list").innerHTML = "<p>Lỗi khi tải đơn hàng.</p>";
+  });
+
+  // ✅ Thêm sự kiện lọc trạng thái
+  document.getElementById("order-filter").addEventListener("change", function () {
+      const selectedStatus = this.value;
+      displayOrders(selectedStatus);
+  });
+});
+function openModal(orderId) {
+    const modal = document.getElementById("orderModal");
+    modal.style.display = "block";
+
+    fetch(`/api/orders/${orderId}/`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem("access_token")}`
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`Lỗi ${response.status}: ${response.statusText}`);
+        }
+        return response.json();
+    })
+    .then(order => {
+        let statusColor = "gray";  
+        let statusText = "Không xác định";
+
+        if (order.status) {  
+            switch (order.status.toLowerCase()) {
+                case "dang_xu_ly": statusColor = "orange"; statusText = "Đang xử lý"; break;
+                case "da_xu_ly": statusColor = "purple"; statusText = "Đã xử lý"; break;
+                case "cho_giao_hang": statusColor = "blue"; statusText = "Chờ giao hàng"; break;
+                case "dang_giao_hang": statusColor = "teal"; statusText = "Đang giao hàng"; break;
+                case "da_giao_hang": statusColor = "green"; statusText = "Đã giao hàng"; break;
+                case "da_huy": statusColor = "red"; statusText = "Đã hủy"; break;
+            }
+        }
+
+        document.getElementById("modal-order-id").textContent = order.id;
+        document.getElementById("modal-total").textContent = (order.total_amount ?? order.tong_tien ?? 0).toLocaleString();
+        document.getElementById("modal-payment").textContent = 
+            order.phuong_thuc_tt === "online" ? `Online (${order.phuong_thuc_online})` : order.phuong_thuc_tt;
+        document.getElementById("modal-status").textContent = statusText;
+        document.getElementById("modal-status").style.color = statusColor;
+        document.getElementById("modal-status").style.fontWeight = "bold";
+        document.getElementById("modal-status").style.fontSize = "20px";
+        document.getElementById("modal-date").textContent = new Date(order.created_at).toLocaleString();
+
+        const itemsList = document.getElementById("modal-items");
+        itemsList.innerHTML = `
+            <table>
+                <thead>
+                    <tr>
+                        <th>Sản phẩm</th>
+                        <th>Số lượng</th>
+                        <th>Giá</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${order.order_items.map(item => `
+                        <tr>
+                            <td>${item.san_pham}</td>
+                            <td style="text-align: center;">${item.so_luong}</td>
+                            <td style="text-align: -webkit-right;">${(item.gia).toLocaleString()} ₫</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+    })
+    .catch(error => {
+        console.error("Lỗi khi tải chi tiết đơn hàng:", error);
+        if (error.message.includes("401")) {
+            alert("Phiên đăng nhập hết hạn, vui lòng đăng nhập lại.");
+            localStorage.removeItem("access_token");
+            window.location.href = "/login";
+        } else {
+            alert("Không thể tải thông tin đơn hàng.");
+        }
+    });
+}
+
+// Đóng modal khi bấm dấu X
+document.querySelector(".close").addEventListener("click", function() {
+    document.getElementById("orderModal").style.display = "none";
+});
+
+// Đóng modal khi bấm ngoài vùng modal
+window.onclick = function(event) {
+    const modal = document.getElementById("orderModal");
+    if (event.target === modal) {
+        modal.style.display = "none";
+    }
+};
+
+</script>
+
+{% endblock %}
